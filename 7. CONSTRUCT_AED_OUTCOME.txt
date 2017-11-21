@@ -1,0 +1,189 @@
+
+--------------------------------------------------------------------
+----- check Censored, Switching, Discontinuation, Augmentation -----
+
+CREATE OR REPLACE TEMPORARY TABLE sandbox.DrugUnPivotCheck AS
+
+Select
+ RANKING
+,ENROLID
+,Case 
+	 when GENCOUNT2 = 0 then 'Censored' 	
+	 when GENCOUNT1 = GENCOUNT2 then 'Switching'
+	 when GENCOUNT1 > GENCOUNT2 then 'Discontinuation'
+	 when GENCOUNT1 < GENCOUNT2 then 'Augmentation'
+	 else NULL END AS OUTCOME1
+,Case 
+	 when GENCOUNT3 = 0 and GENCOUNT2 = 0 then NULL
+	 when GENCOUNT3 = 0 then 'Censored' 	
+	 when GENCOUNT2 = GENCOUNT3 then 'Switching'
+	 when GENCOUNT2 > GENCOUNT3 then 'Discontinuation'
+	 when GENCOUNT2 < GENCOUNT3 then 'Augmentation'
+	 else NULL END AS OUTCOME2
+,Case 
+	 when GENCOUNT4 = 0 and GENCOUNT3 = 0 then NULL
+	 when GENCOUNT4 = 0 then 'Censored' 	
+	 when GENCOUNT3 = GENCOUNT4 then 'Switching'
+	 when GENCOUNT3 > GENCOUNT4 then 'Discontinuation'
+	 when GENCOUNT3 < GENCOUNT4 then 'Augmentation'
+	 else NULL END AS OUTCOME3
+,Case 
+	 when GENCOUNT5 = 0 and GENCOUNT4 = 0 then NULL
+	 when GENCOUNT5 = 0 then 'Censored' 	
+	 when GENCOUNT4 = GENCOUNT5 then 'Switching'
+	 when GENCOUNT4 > GENCOUNT5 then 'Discontinuation'
+	 when GENCOUNT4 < GENCOUNT5 then 'Augmentation'
+	 else NULL END AS OUTCOME4
+,Case 
+	when GENCOUNT6 = 0 and GENCOUNT5 = 0 then NULL
+	 when GENCOUNT6 = 0 then 'Censored' 	
+	 when GENCOUNT5 = GENCOUNT6 then 'Switching'
+	 when GENCOUNT5 > GENCOUNT6 then 'Discontinuation'
+	 when GENCOUNT5 < GENCOUNT6 then 'Augmentation'
+	 else NULL END AS OUTCOME5
+,Case 
+	when GENCOUNT7 = 0 and GENCOUNT6 = 0 then NULL
+	 when GENCOUNT7 = 0 then 'Censored' 	
+	 when GENCOUNT6 = GENCOUNT7 then 'Switching'
+	 when GENCOUNT6 > GENCOUNT7 then 'Discontinuation'
+	 when GENCOUNT6 < GENCOUNT7 then 'Augmentation'
+	 else NULL END AS OUTCOME6
+,Case 
+	when GENCOUNT8 = 0 and GENCOUNT7 = 0 then NULL
+	 when GENCOUNT8 = 0 then 'Censored' 	
+	 when GENCOUNT7 = GENCOUNT8 then 'Switching'
+	 when GENCOUNT7 > GENCOUNT8 then 'Discontinuation'
+	 when GENCOUNT7 < GENCOUNT8 then 'Augmentation'
+	 else NULL END AS OUTCOME7
+,Case 
+	when GENCOUNT9 = 0 and GENCOUNT8 = 0 then NULL
+	 when GENCOUNT9 = 0 then 'Censored' 	
+	 when GENCOUNT8 = GENCOUNT9 then 'Switching'
+	 when GENCOUNT8 > GENCOUNT9 then 'Discontinuation'
+	 when GENCOUNT8 < GENCOUNT9 then 'Augmentation'
+	 else NULL END AS OUTCOME8
+,Case 
+	when GENCOUNT10 = 0 and GENCOUNT9 = 0 then NULL
+	 when GENCOUNT10 = 0 then 'Censored' 	
+	 when GENCOUNT9 = GENCOUNT10 then 'Switching'
+	 when GENCOUNT9 > GENCOUNT10 then 'Discontinuation'
+	 when GENCOUNT9 < GENCOUNT10 then 'Augmentation'
+	 else NULL END AS OUTCOME9
+	 ,GENNME
+       ,STARTDATE
+       ,LASTDAY
+     --,LASTDAYSUPP
+      ,DAYSONDRUG
+      ,d1
+      ,d2
+      ,d3
+      ,d4
+      ,d5
+      ,d6
+      ,d7
+      ,d8
+      ,d9
+      ,d10
+	  FROM(
+Select RANKING
+		,ENROLID
+		,COUNT(d1) over (Partition by ENROLID) as GENCOUNT1
+		,COUNT(d2) over (Partition by ENROLID) as GENCOUNT2
+		,COUNT(d3) over (Partition by ENROLID) as GENCOUNT3
+		,COUNT(d4) over (Partition by ENROLID) as GENCOUNT4
+		,COUNT(d5) over (Partition by ENROLID) as GENCOUNT5
+		,COUNT(d6) over (Partition by ENROLID) as GENCOUNT6
+		,COUNT(d7) over (Partition by ENROLID) as GENCOUNT7
+		,COUNT(d8) over (Partition by ENROLID) as GENCOUNT8
+		,COUNT(d9) over (Partition by ENROLID) as GENCOUNT9
+		,COUNT(d10) over (Partition by ENROLID) as GENCOUNT10
+		,GENNME
+		,STARTDATE
+        ,LASTDAY
+     -- ,LASTDAYSUPP
+      ,DAYSONDRUG
+      ,d1
+      ,d2
+      ,d3
+      ,d4
+      ,d5
+      ,d6
+      ,d7
+      ,d8
+      ,d9
+      ,d10
+	  FROM sandbox.QUERY_LINEOFTHERAPY_MP
+) a
+;
+
+
+---- Unpivot the table
+
+
+CREATE OR REPLACE TABLE sandbox.QUERY_LOT_AED_OUTCOME AS
+
+SELECT  1 as LINE, EnrolId, Outcome1 as OUTCOME
+FROM SANDBOX.DRUGUNPIVOTCHECK 
+WHERE Outcome1 is not null 
+
+UNION
+SELECT   2 as LINE, EnrolId, Outcome2
+FROM SANDBOX.DRUGUNPIVOTCHECK
+WHERE Outcome2 is not null 
+
+UNION
+SELECT  3 as LINE, EnrolId, Outcome3
+FROM SANDBOX.DRUGUNPIVOTCHECK
+WHERE Outcome3 is not null
+
+UNION
+SELECT  4 as LINE, EnrolId, Outcome4
+FROM SANDBOX.DRUGUNPIVOTCHECK
+WHERE Outcome4 is not null
+
+UNION
+SELECT  5 as LINE, EnrolId, Outcome5
+FROM SANDBOX.DRUGUNPIVOTCHECK
+WHERE Outcome5 is not null
+
+UNION
+SELECT  6 as LINE, EnrolId, Outcome6
+FROM SANDBOX.DRUGUNPIVOTCHECK
+WHERE Outcome6 is not null
+
+UNION
+SELECT  7 as LINE, EnrolId, Outcome7
+FROM SANDBOX.DRUGUNPIVOTCHECK
+WHERE Outcome7 is not null
+
+UNION
+SELECT  8 as LINE, EnrolId, Outcome8
+FROM SANDBOX.DRUGUNPIVOTCHECK
+WHERE Outcome8 is not null
+
+UNION
+SELECT  9 as LINE, EnrolId, Outcome9
+FROM SANDBOX.DRUGUNPIVOTCHECK
+WHERE Outcome9 is not null
+
+
+--  SELECT count(*) FROM SANDBOX.DRUGUNPIVOTCHECK LIMIT 100 
+--  SELECT count(*) FROM SANDBOX.QUERY_LOT_AED_OUTCOME 
+--SELECT distinct Ranking, EnrolId, OUTCOME1
+-- FROM SANDBOX.QUERY_LOT_AED_OUTCOME
+--where enrolid = 301673504 LIMIT 100
+
+
+-- SELECT * FROM SANDBOX.QUERY_LOT_AED_OUTCOME where enrolid = 20000955275 LIMIT 100
+
+
+
+
+
+
+
+
+
+
+
+

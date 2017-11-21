@@ -1,0 +1,18 @@
+---------------------------------------------------
+--  create table for dates[CONSTRUCT_ALL_DATES]  --
+---------------------------------------------------
+
+CREATE OR REPLACE TABLE SANDBOX.QUERY_All_DATES AS
+select a.MDate 
+from (
+    select cast(dateadd(month,(a.a + (10 * b.a) + (100 * c.a)),'2009-01-01') as Date) as MDate
+    from (select 0 as a union all select 1 union all select 2 
+          union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as a
+    cross join (select 0 as a union all select 1 union all select 2
+                union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as b
+    cross join (select 0 as a union all select 1 union all select 2
+                union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as c
+) a
+where a.MDate  < '2016-01-01'
+
+SELECT * FROM SANDBOX.QUERY_All_DATES

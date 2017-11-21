@@ -1,0 +1,61 @@
+-------------construct QUERY_LOT_COMB ---------
+
+CREATE or replace temporary table sandbox.LOTD as 
+SELECT RANKING
+      ,ENROLID
+      ,GENNME
+      ,STARTDATE
+      ,LASTDAY
+     -- ,[LASTDAYSUPP
+      ,DAYSONDRUG
+      ,case when D1 is not null then GENNME end as D1
+      ,case when D2 is not null then GENNME end as D2
+      ,case when D3 is not null then GENNME end as D3
+      ,case when D4 is not null then GENNME end as D4
+      ,case when D5 is not null then GENNME end as D5
+      ,case when D6 is not null then GENNME end as D6
+      ,case when D7 is not null then GENNME end as D7
+      ,case when D8 is not null then GENNME end as D8
+      ,case when D9 is not null then GENNME end as D9
+      ,case when D10 is not null then GENNME end as D10
+
+  FROM sandbox.QUERY_LINEOFTHERAPY_MP
+
+  order by enrolid, ranking  ;
+
+
+-- QUERY_LOT_COMB
+
+CREATE or replace table sandbox.QUERY_LOT_COMB as 
+Select Enrolid
+  , case when Line1 = '' then NULL else Line1 end as Line1
+  , case when Line2 = '' then NULL else Line2 end as Line2
+, case when Line3 = '' then NULL else Line3 end as Line3
+, case when Line4 = '' then NULL else Line4 end as Line4
+, case when Line5 = '' then NULL else Line5 end as Line5
+, case when Line6 = '' then NULL else Line6 end as Line6
+, case when Line7 = '' then NULL else Line7 end as Line7
+, case when Line8 = '' then NULL else Line8 end as Line8
+, case when Line9 = '' then NULL else Line9 end as Line9
+, case when Line10 = '' then NULL else Line10 end as Line10
+from
+(
+    SELECT a.enrolid
+    , listagg(a.D1, ', ') WITHIN GROUP (ORDER BY a.Ranking ) as LINE1
+    , listagg(a.D2, ', ') WITHIN GROUP (ORDER BY a.Ranking )  as LINE2
+    , listagg(a.D3, ', ') WITHIN GROUP (ORDER BY a.Ranking )  as LINE3
+    , listagg(a.D4, ', ') WITHIN GROUP (ORDER BY a.Ranking )  as LINE4
+    , listagg(a.D5, ', ') WITHIN GROUP (ORDER BY a.Ranking )  as LINE5
+    , listagg(a.D6, ', ') WITHIN GROUP (ORDER BY a.Ranking )  as LINE6
+    , listagg(a.D7, ', ') WITHIN GROUP (ORDER BY a.Ranking )  as LINE7
+    , listagg(a.D8, ', ') WITHIN GROUP (ORDER BY a.Ranking )  as LINE8
+    , listagg(a.D9, ', ') WITHIN GROUP (ORDER BY a.Ranking )   as LINE9
+    , listagg(a.D10, ', ') WITHIN GROUP (ORDER BY a.Ranking )  as LINE10
+    FROm sandbox.LOTD a
+    join sandbox.LOTD  b on a.enrolid = b.enrolid and a.ranking = b.ranking 
+  
+    GROUP BY a.enrolid
+)
+
+
+

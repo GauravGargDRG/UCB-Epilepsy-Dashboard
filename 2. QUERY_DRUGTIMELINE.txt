@@ -1,0 +1,169 @@
+---------------------------------------------------------------
+--Base Table for Enroll/Date/Drug/Daysupp with only Epi drugs
+---------------------------------------------------------------
+-- SELECT * FROM sandbox.DrugDatesDaySUPP
+
+CREATE OR REPLACE TEMPORARY TABLE sandbox.DrugDatesDaySUPP AS
+
+SELECT distinct ENROLID, SVCDATE, a.NDCNUM, SUM(DAYSUPP) DAYSUPP, PRODNME, PKSIZE, trim(upper(GENNME)) as GENNME, a.source
+FROM RWD_DB.EPILEPSY_MEDSTAT_MC_09.EPILEPSY_OUTPATIENTPRESCRIPTIONDRUG_FINAL_VIEW a
+inner join (select a.Prodnme, a.Drugname as Gennme, a.ndcnum, pksize
+            from RWD_DB.EPILEPSY_MEDSTAT_MC_09.My_inp_IndicationNDCNUM_Final_VIEW a 
+            left join RWD_DB.EPILEPSY_MEDSTAT_MC_09.UCB_REDBOOK_NAMES_VIEW b on a.NDCNUM = b.NDCNUM
+           ) b on a.NDCNUM = b.NDCNUM where enrolid <> '0' and 
+
+trim(lower(GENNME)) in
+(
+--1st Gen
+'clobazam',
+'carbamazepine',
+'carbamazepine xr', --tegretol-xr  CARBATROL   EQUETRO
+'valproic acid',
+'phenytoin',
+'phenobarbital',
+'other first-generation aeds',
+--'clonazepam',
+--'ethosuximide',
+--'primidone',
+'rectal diazepam',
+--'diazepam',
+--'dIASTAT acudial'
+--'dIASTAT pediatric'
+--2nd Gen
+'levetiracetam',
+'levetiracetam xr',-- --Keppra XR, 
+'lamotrigine',
+'lamotrigine xr',--  LAMICTAL XR
+'topiramate', 
+--'Topiramate' 
+'trokendi xr',
+-- 'Topiramate'   
+'qudexy xr',
+'oxcarbazepine' ,
+'oxcarbazepine xr',-- OXTELLAR XR,
+'zonisamide',
+'gabapentin',
+'divalproex sodium', --DEPAKOTE,
+'divalproex sodium er',-- DEPAKOTE ER,
+'vigabatrin', -- Vigabatrin,
+'tiagabine', --Tiagabine,
+'felbamate', --Felbamate,
+--3rd Gen
+'lacosamide',
+'ezogabine',
+'pregabalin',
+'rufinamide',
+'perampanel',
+'eslicarbazepine acetate')
+group by ENROLID, SVCDATE , a.NDCNUM, PRODNME, PKSIZE, GENNME, a.source  ;
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+--Full Definitions - Defining The Dates for Each Drug (First, Last, DaysonDrug, etc)
+---------------------------------------------------------------------------------------------------
+CREATE OR REPLACE TEMPORARY TABLE sandbox.DrugRankDefinitions AS
+
+SELECT  distinct 
+	 a.source
+	,a.ENROLID
+	,a.SVCDATE
+	,MIN(a.SVCDATE) over (partition by a.Enrolid,a.GENNME) MinDate
+	,MAX(a.SVCDATE) over (partition by a.Enrolid,a.GENNME) MaxDate
+	,Datediff(dd, MIN(a.SVCDATE) over (partition by a.Enrolid,a.GENNME),MAX(a.SVCDATE) over (partition by a.Enrolid,a.GENNME)) DateDiff
+	,Datediff(dd, MIN(a.SVCDATE) over (partition by a.Enrolid,a.GENNME),MAX(a.SVCDATE) over (partition by a.Enrolid,a.GENNME)) + SUM(DAYSUPPt) over (partition by a.Enrolid,a.GENNME) DateDiffTotal
+	,dateadd(dd, SUM(DAYSUPPt) over (partition by a.Enrolid,a.GENNME),MAX(a.SVCDATE) over (partition by a.Enrolid,a.GENNME)) lastdate
+	,SUM(DAYSUPP) over (partition by a.Enrolid,a.GENNME) TotalDAYSUPP
+	,SUM(DAYSUPP) over (partition by a.Enrolid,a.GENNME) + sum(DaySUPPT) over (partition by a.Enrolid,a.GENNME) TotalDaysonDrug
+	,a.Ranking
+	,SVCDATENext
+	,SVCDATEPREV
+	,daysuppnext
+	,daysuppprev
+	,case when SVCDATENEXT is null then 0 else Datediff(dd, a.SVCDATE, SVCDATENext) end as Diff
+	,case when SVCDATEPREV is null then 0 else Datediff(dd, SVCDATEPrev, a.SVCDATE) end as DiffPrev 
+	,case when a.SVCDATE = MIN(a.SVCDATE) over (partition by a.Enrolid,a.GENNME) then a.SVCDATE else NULL end as StartDate
+	,case when a.SVCDATE = MAX(a.SVCDATE) over (partition by a.Enrolid,a.GENNME) then a.SVCDATE else NULL end as EndDate
+	,daysuppt
+	--,a.NDCNUM
+	,a.DAYSUPP
+	-- ,PRODNME
+	--,PKSIZE
+	,a.GENNME
+FROM 
+-------------------------------------------------
+--Join to ranking to get next/prev date
+-------------------------------------------------
+(Select distinct
+	Enrolid
+	,source
+	,SVCDATE
+	, case when rank() over (partition by Enrolid,GENNME order by svcdate desc) = 1 then daysupp else 0 end as Daysuppt
+	,rank() over (partition by Enrolid,GENNME order by svcdate desc) as Ranking
+	--, NDCNUM
+	, DAYSUPP
+	,PRODNME
+	,PKSIZE
+	,GENNME
+	from sandbox.DrugDatesDaySUPP ) a
+left join (select distinct rank() over (partition by Enrolid,GENNME order by svcdate desc) as Ranking, 
+			EnrolID, SVCDATE as SVCDATENext, GENNME, DAYSUPP as DAYSUPPNEXT 
+			from sandbox.DrugDatesDaySUPP 
+		  ) c on c.enrolid = a.enrolid and c.Ranking = a.Ranking-1 and c.GENNME = a.GENNME
+left join (select distinct rank() over (partition by Enrolid,GENNME order by svcdate desc) as Ranking, 
+			EnrolID, SVCDATE as SVCDATEPrev, GENNME, DAYSUPP as DAYSUPPPREV 
+			from sandbox.DrugDatesDaySUPP
+		  ) d on d.enrolid = a.enrolid and d.Ranking = a.Ranking+1 and d.GENNME = a.GENNME
+-------------------------------------------------
+order by enrolid, GENNME, svcdate ;
+
+
+--------------------------------------------------
+--Creating DrugTimeline elimiting unecessary rows by only showing first and last days for each drug per person
+--------------------------------------------------
+CREATE OR REPLACE TEMPORARY TABLE sandbox.DRUGTimeline AS
+
+Select a.Enrolid, a.source, a.GENNME, StartDate, EndDate, DAYSUPP as LASTDAYSUPP, DATEDIFF(dd,STARTDATE,ENDDATE) + DAYSUPP AS DAYSONDRUG
+from
+	(Select Enrolid, source, GENNME, StartDate, rank() over (partition by Enrolid,GENNME order by Enrolid,GENNME,StartDate) StartRank
+	from (Select  Enrolid, source, GENNME, StartDate,  EndDate, SUM(DAYSUPP) DAYSUPP
+          from sandbox.DrugRankDefinitions
+	      group by ENROLID, GENNME, STARTDATE, ENDDATE, source
+         ) a
+	 Where StartDate is not null
+    ) a
+left join (
+		Select
+		Enrolid, source, GENNME, EndDate, rank() over (partition by Enrolid,GENNME order by Enrolid,GENNME,ENDDate) ENDRank, DAYSUPP
+		from (Select  Enrolid, source, GENNME, StartDate,  EndDate, SUM(DAYSUPP) DAYSUPP from sandbox.DrugRankDefinitions
+		group by ENROLID, GENNME, STARTDATE, ENDDATE, source) a
+		Where EndDate is not null
+		) b on a.Enrolid = b.Enrolid and a.GENNME = b.GENNME  and A.StartRank = B.ENDRank
+--  where (DATEDIFF(dd,STARTDATE,ENDDATE) + DAYSUPP) > 60
+order by enrolid, StartDate, GENNME ;
+
+----------------------------------------------
+---------------------------------------------
+--ADD RANKING TO TIMELINE by person to show order of drugs
+---------------------------------------------
+CREATE  OR REPLACE TABLE sandbox.QUERY_DRUGTIMELINE as
+Select distinct RANKING
+  , a.source
+  , a.ENROLID
+  , case when GENNME = 'OTHER FIRST-GENERATION AEDS' then 'OTHER FIRST GENERATION AEDS' else GENNME end as GENNME
+  , a.STARTDATE
+  , ENDDATE
+  , DAYSONDRUG
+  , LASTDAYSUPP
+  , DATEADD(dd,LASTDAYSUPP,ENDDATE) LASTDAY
+from sandbox.DRUGTimeline a
+left join
+( Select distinct rank() over (partition by enrolid order by STARTDATE) as RANKING, ENROLID, STARTDATE
+	FROM (Select Distinct enrolid, startdate from sandbox.DRUGTimeline) a) b ON a.ENROLID = b.ENROLID and a.STARTDATE = b.STARTDATE
+order by enrolid , startdate, gennme
+
+-- SELECT * FROM sandbox.QUERY_DRUGTIMELINE2 --  1,536,261
+-- SELECT * FROM sandbox.QUERY_DRUGTIMELINE  --  1,536,261
+-- SELECT count(*) FROM sandbox.QUERY_DRUGTIMELINE  --  1,536,261
+
+-- select * from sandbox.DRUGTimeline

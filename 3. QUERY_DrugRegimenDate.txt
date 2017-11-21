@@ -1,0 +1,306 @@
+------------------------------------------------------------------------
+--Selects Drugs for each person for every month that they took the drug
+------------------------------------------------------------------------
+
+CREATE OR REPLACE TABLE sandbox.QUERY_DrugRegimenDate AS
+Select 
+	Enrolid,
+	Mdate,
+	CLOBAZAM,
+	CARBAMAZEPINE,
+	CARBAMAZEPINE_XR,
+	VALPROIC_ACID,
+	PHENYTOIN,
+	PHENOBARBITAL,
+	OTHER_FIRST_GENERATION_AEDS,
+	RECTAL_DIAZEPAM,
+	LEVETIRACETAM,
+	LEVETIRACETAM_XR,
+	LAMOTRIGINE,
+	LAMOTRIGINE_XR,
+	TOPIRAMATE,
+	TROKENDI_XR,
+	QUDEXY_XR,
+	OXCARBAZEPINE,
+	OXCARBAZEPINE_XR,
+	ZONISAMIDE,
+	GABAPENTIN,
+	DIVALPROEX_SODIUM,
+	DIVALPROEX_SODIUM_ER,
+	VIGABATRIN,
+	TIAGABINE,
+	FELBAMATE,
+	LACOSAMIDE,
+	EZOGABINE,
+	PREGABALIN,
+	RUFINAMIDE,
+	PERAMPANEL,
+	ESLICARBAZEPINE_ACETATE,
+	CASE WHEN DrugCombo = '' THEN NULL else DrugCombo end as DrugCombo,
+	DrugNumber
+FROM (
+	Select 
+	Enrolid,
+	Mdate,
+	CLOBAZAM,
+	CARBAMAZEPINE,
+	CARBAMAZEPINE_XR,
+	VALPROIC_ACID,
+	PHENYTOIN,
+	PHENOBARBITAL,
+	OTHER_FIRST_GENERATION_AEDS,
+	RECTAL_DIAZEPAM,
+	LEVETIRACETAM,
+	LEVETIRACETAM_XR,
+	LAMOTRIGINE,
+	LAMOTRIGINE_XR,
+	TOPIRAMATE,
+	TROKENDI_XR,
+	QUDEXY_XR,
+	OXCARBAZEPINE,
+	OXCARBAZEPINE_XR,
+	ZONISAMIDE,
+	GABAPENTIN,
+	DIVALPROEX_SODIUM,
+	DIVALPROEX_SODIUM_ER,
+	VIGABATRIN,
+	TIAGABINE,
+	FELBAMATE,
+	LACOSAMIDE,
+	EZOGABINE,
+	PREGABALIN,
+	RUFINAMIDE,
+	PERAMPANEL,
+	ESLICARBAZEPINE_ACETATE,
+    CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(
+    CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(
+	CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CASE WHEN CLOBAZAM is not null THEN 'CLOBAZAM,' else '' END,
+	CASE WHEN CARBAMAZEPINE is not null THEN 'CARBAMAZEPINE,' else '' END),
+	CASE WHEN CARBAMAZEPINE_XR is not null THEN 'CARBAMAZEPINE XR,' else '' END), --tegretol-xr  CARBATROL   EQUETRO
+	CASE WHEN VALPROIC_ACID is not null THEN 'VALPROIC ACID,' else '' END),
+	CASE WHEN PHENYTOIN is not null THEN 'PHENYTOIN,' else '' END),
+	CASE WHEN PHENOBARBITAL is not null THEN 'PHENOBARBITAL,' else '' END),
+	CASE WHEN OTHER_FIRST_GENERATION_AEDS is not null THEN 'OTHER FIRST GENERATION AEDS,' else '' END),
+	--Clonazepam,
+	--Ethosuximide,
+	--Primidone,
+	CASE WHEN RECTAL_DIAZEPAM is not null THEN 'RECTAL DIAZEPAM,' else '' END),
+	--Diazepam,
+	--DIASTAT ACUDIAL
+	--DIASTAT PEDIATRIC
+	--2nd Gen
+	CASE WHEN LEVETIRACETAM is not null THEN 'LEVETIRACETAM,' else '' END),
+	CASE WHEN LEVETIRACETAM_XR is not null THEN 'LEVETIRACETAM XR,' else '' END), --Keppra XR, 
+	CASE WHEN LAMOTRIGINE is not null THEN 'LAMOTRIGINE,' else '' END),
+	CASE WHEN LAMOTRIGINE_XR is not null THEN 'LAMOTRIGINE XR,'  else '' END),
+	CASE WHEN TOPIRAMATE is not null THEN 'TOPIRAMATE,' else '' END), 
+	--TOPIRAMATE 
+	CASE WHEN TROKENDI_XR is not null THEN 'TROKENDI XR,'  else '' END),
+	-- TOPIRAMATE   
+	CASE WHEN QUDEXY_XR is not null THEN 'QUDEXY XR,'  else '' END),
+	CASE WHEN OXCARBAZEPINE is not null THEN 'OXCARBAZEPINE,'  else '' END),
+	CASE WHEN OXCARBAZEPINE_XR is not null THEN 'OXCARBAZEPINE XR,' else '' END),
+	CASE WHEN ZONISAMIDE is not null THEN 'ZONISAMIDE,'  else '' END),
+	CASE WHEN GABAPENTIN is not null THEN 'GABAPENTIN,' else '' END),
+	CASE WHEN DIVALPROEX_SODIUM is not null THEN 'DIVALPROEX SODIUM,' else '' END), --DEPAKOTE,
+	CASE WHEN DIVALPROEX_SODIUM_ER is not null THEN 'DIVALPROEX SODIUM ER,'  else '' END), -- DEPAKOTE ER,
+	CASE WHEN VIGABATRIN is not null THEN 'VIGABATRIN,'  else '' END), -- VIGABATRIN,
+	CASE WHEN TIAGABINE is not null THEN 'TIAGABINE,'  else '' END), --TIAGABINE,
+	CASE WHEN FELBAMATE is not null THEN 'FELBAMATE,'  else '' END), --FELBAMATE,
+
+	--3rd Gen
+	CASE WHEN LACOSAMIDE is not null THEN 'LACOSAMIDE,' else '' END),
+	CASE WHEN EZOGABINE is not null THEN 'EZOGABINE,' else '' END),
+	CASE WHEN PREGABALIN is not null THEN 'PREGABALIN,' else '' END),
+	CASE WHEN RUFINAMIDE is not null THEN 'RUFINAMIDE,' else '' END),
+	CASE WHEN PERAMPANEL is not null THEN 'PERAMPANEL,' else '' END),
+	CASE WHEN ESLICARBAZEPINE_ACETATE is not null THEN 'ESLICARBAZEPINE ACETATE,' else '' END) as DrugCombo,
+
+	CASE WHEN CLOBAZAM is not null THEN 1 else 0 END+
+	CASE WHEN CARBAMAZEPINE is not null THEN 1 else 0 END+
+	CASE WHEN CARBAMAZEPINE_XR is not null THEN 1 else 0 END+ --tegretol-xr  CARBATROL   EQUETRO
+	CASE WHEN VALPROIC_ACID is not null THEN 1 else 0 END+
+	CASE WHEN PHENYTOIN is not null THEN 1 else 0 END+
+	CASE WHEN PHENOBARBITAL is not null THEN 1 else 0 END+
+	CASE WHEN OTHER_FIRST_GENERATION_AEDS is not null THEN 1 else 0 END+
+	--Clonazepam+
+	--Ethosuximide+
+	--Primidone+
+	CASE WHEN RECTAL_DIAZEPAM is not null THEN 1 else 0 END+
+	--Diazepam+
+	--DIASTAT ACUDIAL
+	--DIASTAT PEDIATRIC
+	--2nd Gen
+	CASE WHEN LEVETIRACETAM is not null THEN 1 else 0 END+
+	CASE WHEN LEVETIRACETAM_XR is not null THEN 1 else 0 END+ --Keppra XR+ 
+	CASE WHEN LAMOTRIGINE is not null THEN 1 else 0 END+
+	CASE WHEN LAMOTRIGINE_XR is not null THEN 1  else 0 END+
+	CASE WHEN TOPIRAMATE is not null THEN 1 else 0 END+ 
+	--TOPIRAMATE 
+	CASE WHEN TROKENDI_XR is not null THEN 1  else 0 END+
+	-- TOPIRAMATE   
+	CASE WHEN QUDEXY_XR is not null THEN 1  else 0 END+
+	CASE WHEN OXCARBAZEPINE is not null THEN 1  else 0 END+
+	CASE WHEN OXCARBAZEPINE_XR is not null THEN 1 else 0 END+
+	CASE WHEN ZONISAMIDE is not null THEN 1  else 0 END+
+	CASE WHEN GABAPENTIN is not null THEN 1 else 0 END+
+	CASE WHEN DIVALPROEX_SODIUM is not null THEN 1 else 0 END+ --DEPAKOTE+
+	CASE WHEN DIVALPROEX_SODIUM_ER is not null THEN 1  else 0 END+ -- DEPAKOTE ER+
+	CASE WHEN VIGABATRIN is not null THEN 1 else 0 END+ -- VIGABATRIN+
+	CASE WHEN TIAGABINE is not null THEN 1  else 0 END+ --TIAGABINE+
+	CASE WHEN FELBAMATE is not null THEN 1  else 0 END+ --FELBAMATE+
+
+	--3rd Gen
+	CASE WHEN LACOSAMIDE is not null THEN 1 else 0 END+
+	CASE WHEN EZOGABINE is not null THEN 1 else 0 END+
+	CASE WHEN PREGABALIN is not null THEN 1 else 0 END+
+	CASE WHEN RUFINAMIDE is not null THEN 1 else 0 END+
+	CASE WHEN PERAMPANEL is not null THEN 1 else 0 END+
+	CASE WHEN ESLICARBAZEPINE_ACETATE is not null THEN 1 else 0 END as DrugNumber
+FROM 
+(
+		Select 
+	Enrolid,
+	Mdate,
+	MAX(CLOBAZAM) as CLOBAZAM,
+	MAX(CARBAMAZEPINE) as CARBAMAZEPINE,
+	MAX(CARBAMAZEPINE_XR) as CARBAMAZEPINE_XR,
+	MAX(VALPROIC_ACID) as VALPROIC_ACID,
+	MAX(PHENYTOIN) as PHENYTOIN,
+	MAX(PHENOBARBITAL) as PHENOBARBITAL,
+	MAX(OTHER_FIRST_GENERATION_AEDS) as OTHER_FIRST_GENERATION_AEDS,
+	MAX(RECTAL_DIAZEPAM) as RECTAL_DIAZEPAM,
+	Max(LEVETIRACETAM) as LEVETIRACETAM,
+	Max(LEVETIRACETAM_XR) as LEVETIRACETAM_XR,
+	Max(LAMOTRIGINE) as LAMOTRIGINE,
+	Max(LAMOTRIGINE_XR) as LAMOTRIGINE_XR,
+	Max(TOPIRAMATE) as TOPIRAMATE,
+	Max(TROKENDI_XR) as TROKENDI_XR,
+	Max(QUDEXY_XR) as QUDEXY_XR,
+	Max(OXCARBAZEPINE) as OXCARBAZEPINE,
+	Max(OXCARBAZEPINE_XR) as OXCARBAZEPINE_XR,
+	Max(ZONISAMIDE) as ZONISAMIDE,
+	Max(GABAPENTIN) as GABAPENTIN,
+	Max(DIVALPROEX_SODIUM) as DIVALPROEX_SODIUM,
+	Max(DIVALPROEX_SODIUM_ER) as DIVALPROEX_SODIUM_ER,
+	Max(VIGABATRIN) as VIGABATRIN,
+	Max(TIAGABINE) as TIAGABINE,
+	Max(FELBAMATE) as FELBAMATE,
+	Max(LACOSAMIDE) as LACOSAMIDE,
+	Max(EZOGABINE) as EZOGABINE,
+	Max(PREGABALIN) as PREGABALIN,
+	Max(RUFINAMIDE) as RUFINAMIDE,
+	Max(PERAMPANEL) as PERAMPANEL,
+	Max(ESLICARBAZEPINE_ACETATE ) as ESLICARBAZEPINE_ACETATE
+
+	FROM(
+		Select a.Enrolid,
+		Mdate,
+		CASE WHEN Gennme = 'CLOBAZAM' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'CLOBAZAM' else Null end as CLOBAZAM,
+		CASE WHEN Gennme = 'CARBAMAZEPINE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'CARBAMAZEPINE' else Null end as CARBAMAZEPINE,
+		CASE WHEN Gennme = 'CARBAMAZEPINE XR' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'CARBAMAZEPINE XR' else Null end as CARBAMAZEPINE_XR, --tegretol-xr  CARBATROL   EQUETRO
+		CASE WHEN Gennme = 'VALPROIC ACID' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'VALPROIC ACID' else Null end as VALPROIC_ACID,
+		CASE WHEN Gennme = 'PHENYTOIN' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'PHENYTOIN' else Null end as PHENYTOIN,
+		CASE WHEN Gennme = 'PHENOBARBITAL' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'PHENOBARBITAL' else Null end as PHENOBARBITAL,
+		CASE WHEN Gennme = 'OTHER FIRST GENERATION AEDS' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'OTHER FIRST GENERATION AEDS' else Null end as OTHER_FIRST_GENERATION_AEDS,
+		--Clonazepam,
+		--Ethosuximide,
+		--Primidone,
+		CASE WHEN Gennme = 'RECTAL DIAZEPAM' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'RECTAL DIAZEPAM' else Null end as RECTAL_DIAZEPAM,
+		--Diazepam,
+		CASE WHEN Gennme = 'LEVETIRACETAM' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'LEVETIRACETAM' else Null end as LEVETIRACETAM,
+		CASE WHEN Gennme = 'LEVETIRACETAM XR' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'LEVETIRACETAM XR' else Null end as LEVETIRACETAM_XR,-- --Keppra XR, 
+		CASE WHEN Gennme = 'LAMOTRIGINE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'LAMOTRIGINE' else Null end as LAMOTRIGINE,
+		CASE WHEN Gennme = 'LAMOTRIGINE XR' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'LAMOTRIGINE XR' else Null end as LAMOTRIGINE_XR,--  LAMICTAL XR
+		CASE WHEN Gennme = 'TOPIRAMATE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'TOPIRAMATE' else Null end as TOPIRAMATE, 
+		--TOPIRAMATE 
+		CASE WHEN Gennme = 'TROKENDI XR' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'TROKENDI XR' else Null end as TROKENDI_XR,
+		-- TOPIRAMATE   
+		CASE WHEN Gennme = 'QUDEXY XR' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'QUDEXY XR' else Null end as QUDEXY_XR,
+		CASE WHEN Gennme = 'OXCARBAZEPINE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'OXCARBAZEPINE' else Null end as OXCARBAZEPINE,
+		CASE WHEN Gennme = 'OXCARBAZEPINE XR' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'OXCARBAZEPINE XR' else Null end as OXCARBAZEPINE_XR,-- OXTELLAR XR,
+		CASE WHEN Gennme = 'ZONISAMIDE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'ZONISAMIDE' else Null end as ZONISAMIDE,
+		CASE WHEN Gennme = 'GABAPENTIN' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'GABAPENTIN' else Null end as GABAPENTIN,
+		CASE WHEN Gennme = 'DIVALPROEX SODIUM' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'DIVALPROEX SODIUM' else Null end as DIVALPROEX_SODIUM, --DEPAKOTE,
+		CASE WHEN Gennme = 'DIVALPROEX SODIUM ER' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'DIVALPROEX SODIUM ER' else Null end as DIVALPROEX_SODIUM_ER,-- DEPAKOTE ER,
+		CASE WHEN Gennme = 'VIGABATRIN' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'VIGABATRIN' else Null end as VIGABATRIN, -- VIGABATRIN,
+		CASE WHEN Gennme = 'TIAGABINE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'TIAGABINE' else Null end as TIAGABINE, --TIAGABINE,
+		CASE WHEN Gennme = 'FELBAMATE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'FELBAMATE' else Null end as FELBAMATE, --FELBAMATE,
+
+		--3rd Gen
+		CASE WHEN Gennme = 'LACOSAMIDE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'LACOSAMIDE' else Null end as LACOSAMIDE,
+		CASE WHEN Gennme = 'EZOGABINE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'EZOGABINE' else Null end as EZOGABINE,
+		CASE WHEN Gennme = 'PREGABALIN' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'PREGABALIN' else Null end as PREGABALIN,
+		CASE WHEN Gennme = 'RUFINAMIDE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'RUFINAMIDE' else Null end as RUFINAMIDE,
+		CASE WHEN Gennme = 'PERAMPANEL' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'PERAMPANEL' else Null end as PERAMPANEL,
+		CASE WHEN Gennme = 'ESLICARBAZEPINE ACETATE' AND Startdate <= Mdate AND LastDay >= Mdate THEN 'ESLICARBAZEPINE ACETATE' else Null end as ESLICARBAZEPINE_ACETATE 
+
+	FROM
+		(	Select Distinct Enrolid
+			,Mdate
+			--Gennme,
+			--Startdate,
+			--Lastday
+			FROM (Select distinct enrolid, '1' as Joincolumn FROM sandbox.QUERY_DRUGTIMELINE) a
+				  LEFT join (Select Mdate, '1' as Joincolumn FROM sandbox.Query_All_Dates) b on a.Joincolumn = b.Joincolumn
+		) a 
+	LEFT JOIN sandbox.QUERY_DRUGTIMELINE
+      b on a.Enrolid = b.enrolid
+	) a
+
+	Group by enrolid, mdate
+)	a ) a
+Where CLOBAZAM is not null or 
+CARBAMAZEPINE is not null or
+CARBAMAZEPINE_XR is not null or
+VALPROIC_ACID is not null or
+PHENYTOIN is not null or
+PHENOBARBITAL is not null or
+OTHER_FIRST_GENERATION_AEDS is not null or
+--Clonazepam,
+--Ethosuximide,
+--Primidone,
+RECTAL_DIAZEPAM is not null or
+--Diazepam,
+--DIASTAT ACUDIAL
+--DIASTAT PEDIATRIC
+--2nd Gen
+LEVETIRACETAM is not null or
+LEVETIRACETAM_XR is not null or
+LAMOTRIGINE is not null or
+LAMOTRIGINE_XR is not null or
+TOPIRAMATE is not null or
+--TOPIRAMATE 
+TROKENDI_XR is not null or
+-- TOPIRAMATE   
+QUDEXY_XR is not null or
+OXCARBAZEPINE is not null or
+OXCARBAZEPINE_XR is not null or
+ZONISAMIDE is not null or
+GABAPENTIN is not null or
+DIVALPROEX_SODIUM is not null or
+DIVALPROEX_SODIUM_ER is not null or
+VIGABATRIN is not null or
+TIAGABINE is not null or
+FELBAMATE is not null or
+--3rd Gen
+LACOSAMIDE is not null or
+EZOGABINE is not null or
+PREGABALIN is not null or
+RUFINAMIDE is not null or
+PERAMPANEL is not null or
+ESLICARBAZEPINE_ACETATE is not null 
+
+order by a.enrolid, mdate
+
+
+-- SELECT count(*) FROM sandbox.QUERY_DrugRegimenDate
+
+-- desc table  sandbox.QUERY_DrugRegimenDate
+
+-- SELECT * FROM sandbox.Query_Drugtimeline LIMIT 200
+
+
+
+
+

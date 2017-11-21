@@ -1,0 +1,144 @@
+/****** SelectTopNRows  ******/
+
+
+CREATE OR REPLACE TEMPORARY TABLE sandbox.CondensedTimeline AS
+
+Select Enrolid, Mdate, Drugcombo, Drugnumber
+	 -- ,b.Mdate
+	 -- ,c.mdate
+      ,a.Clobazam
+      ,a.Carbamazepine
+      ,a.Carbamazepine_XR
+      ,a.Valproic_acid
+      ,a.Phenytoin
+      ,a.Phenobarbital
+      ,a.Other_first_generation_AEDs
+      ,a.Rectal_Diazepam
+      ,a.Levetiracetam
+      ,a.Levetiracetam_XR
+      ,a.Lamotrigine
+      ,a.Lamotrigine_XR
+      ,a.Topiramate
+      ,a.Trokendi_XR
+      ,a.QUDEXY_XR
+      ,a.Oxcarbazepine
+      ,a.Oxcarbazepine_XR
+      ,a.Zonisamide
+      ,a.Gabapentin
+      ,a.Divalproex_Sodium
+      ,a.Divalproex_Sodium_ER
+      ,a.Vigabatrin
+      ,a.Tiagabine
+      ,a.Felbamate
+      ,a.Lacosamide
+      ,a.Ezogabine
+      ,a.Pregabalin
+      ,a.Rufinamide
+      ,a.Perampanel
+      ,a.Eslicarbazepine_Acetate
+from (
+SELECT a.Enrolid
+      ,a.Mdate
+	 -- ,b.Mdate
+	 -- ,c.mdate
+      ,a.Clobazam
+      ,a.Carbamazepine
+      ,a.Carbamazepine_XR
+      ,a.Valproic_acid
+      ,a.Phenytoin
+      ,a.Phenobarbital
+      ,a.Other_first_generation_AEDs
+      ,a.Rectal_Diazepam
+      ,a.Levetiracetam
+      ,a.Levetiracetam_XR
+      ,a.Lamotrigine
+      ,a.Lamotrigine_XR
+      ,a.Topiramate
+      ,a.Trokendi_XR
+      ,a.QUDEXY_XR
+      ,a.Oxcarbazepine
+      ,a.Oxcarbazepine_XR
+      ,a.Zonisamide
+      ,a.Gabapentin
+      ,a.Divalproex_Sodium
+      ,a.Divalproex_Sodium_ER
+      ,a.Vigabatrin
+      ,a.Tiagabine
+      ,a.Felbamate
+      ,a.Lacosamide
+      ,a.Ezogabine
+      ,a.Pregabalin
+      ,a.Rufinamide
+      ,a.Perampanel
+      ,a.Eslicarbazepine_Acetate
+      ,case 
+			when a.DrugCombo = b.DrugCombo 
+				then 
+				case when c.ranking is not null then NULL else a.DrugCombo 
+				end 
+			else a.DrugCombo 
+		end as Drugcombo
+	--  ,b.DrugCombo
+	--  ,c.DrugCombo
+	  ,a.DrugNumber
+	--  ,a.ranking
+	--  ,b.ranking
+	--  ,c.ranking
+	
+  FROM (Select *, dense_rank() over (partition by enrolid order by mdate) ranking 
+			from sandbox.QUERY_DrugRegimenDate) a
+ Left join (Select *, dense_rank() over (partition by enrolid order by mdate) ranking 
+				from sandbox.QUERY_DrugRegimenDate) b
+                on a.Enrolid = b.Enrolid and a.ranking-1 = b.ranking
+ Left join (Select *, dense_rank() over (partition by enrolid order by mdate) ranking 
+			    from sandbox.QUERY_DrugRegimenDate) c
+                on a.Enrolid = c.Enrolid and a.ranking = c.ranking-1
+  ) a
+Where Drugcombo is not null
+order by a.enrolid, a.mdate ;
+
+CREATE OR REPLACE TABLE sandbox.QUERY_Drug_COMBO AS
+Select a.enrolid, a.mdate, b.mdate as edate, a.drugcombo,a.drugnumber 
+	,a.Clobazam
+	,a.Carbamazepine
+	,a.Carbamazepine_XR
+	,a.Valproic_acid
+	,a.Phenytoin
+	,a.Phenobarbital
+	,a.Other_first_generation_AEDs
+	,a.Rectal_Diazepam
+	,a.Levetiracetam
+	,a.Levetiracetam_XR
+	,a.Lamotrigine
+	,a.Lamotrigine_XR
+	,a.Topiramate
+	,a.Trokendi_XR
+	,a.QUDEXY_XR
+	,a.Oxcarbazepine
+	,a.Oxcarbazepine_XR
+	,a.Zonisamide
+	,a.Gabapentin
+	,a.Divalproex_Sodium
+	,a.Divalproex_Sodium_ER
+	,a.Vigabatrin
+	,a.Tiagabine
+	,a.Felbamate
+	,a.Lacosamide
+	,a.Ezogabine
+	,a.Pregabalin
+	,a.Rufinamide
+	,a.Perampanel
+	,a.Eslicarbazepine_Acetate
+	,dense_rank() over (partition by a.enrolid order by a.mdate) Line  
+from (Select *, dense_rank() over (partition by enrolid order by mdate) ranking 
+FROM sandbox.CondensedTimeline) a
+left join (Select *, dense_rank() over (partition by enrolid order by mdate) ranking FROM sandbox.CondensedTimeline) b
+		on a.Enrolid = b.Enrolid and a.ranking = b.ranking-1
+where b.enrolid is not null
+order by a.enrolid, a.mdate
+
+
+-- SELECT COUNT(*) FROM sandbox.CondensedTimeline 
+-- SELECT COUNT(*) FROM sandbox.QUERY_Drug_COMBO 
+
+

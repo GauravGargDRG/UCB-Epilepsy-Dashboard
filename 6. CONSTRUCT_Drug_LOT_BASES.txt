@@ -1,0 +1,72 @@
+---------------------CONSTRUCT_Drug_LOT_BASES---------------------
+
+CREATE OR REPLACE TABLE sandbox.QUERY_LINEOFTHERAPY_MP AS
+
+SELECT 
+	 rank() over (partition by a.enrolid order by startdate) ranking,
+	 a.ENROLID
+	,a.GENNME
+	,a.STARTDATE
+	--,ENDDATE
+	--,LASTDAYSUPP
+	,a.LASTDAY
+	,a.DAYSONDRUG
+	,d1 d1
+	,d2 d2
+	,d3 d3
+	,d4 d4
+	,d5 d5
+	,d6 d6
+	,d7 d7
+	,d8 d8
+	,d9 d9
+	,d10 d10
+FROM sandbox.QUERY_DRUGTIMELINE a
+left join sandbox.QUERY_Drug_Line_of_Therapy b   on a.enrolid = b.enrolid and a.gennme = b.drug
+order by enrolid ;
+
+
+------------------------------------------
+--Creates second table
+
+CREATE OR REPLACE TABLE sandbox.QUERY_LINEOFTHERAPY_MP_UTIL_PERS AS
+
+SELECT 
+	rank() over (partition by a.enrolid order by startdate) ranking
+	,a.ENROLID
+	,a.GENNME
+	,a.STARTDATE
+	--,ENDDATE
+	--,LASTDAYSUPP
+	,a.LASTDAY
+	,a.DAYSONDRUG
+	,d1 a1
+	,d2 a2
+	,d3 a3
+	,d4 a4
+	,d5 a5
+	,d6 a6
+	,d7 a7
+	,d8 a8
+	,d9 a9
+	,d10 a10
+	,e1 b1
+	,e2 b2
+	,e3 b3
+	,e4 b4
+	,e5 b5
+	,e6 b6
+	,e7 b7
+	,e8 b8
+	,e9 b9
+	,e10 b10
+FROM sandbox.QUERY_DRUGTIMELINE a
+left join sandbox.QUERY_Drug_Line_of_Therapy b on a.enrolid = b.enrolid and a.gennme = b.drug
+
+
+-- SELECT COUNT(*) FROm sandbox.QUERY_LINEOFTHERAPY_MP
+-- SELECT COUNT(*) FROm sandbox.QUERY_LINEOFTHERAPY_MP_UTIL_PERS
+
+-- SELECT COUNT(*) FROM QUERY_DRUGTIMELINE
+
+

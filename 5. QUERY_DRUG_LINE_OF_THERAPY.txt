@@ -1,0 +1,545 @@
+-------------------------------------------------------------------
+---------------- CONSTRUCT_Drug_Line_of_Therapy--------------------
+-------------------------------------------------------------------
+
+----------- CONSTRUCT Table using union for unpivot----------------
+
+CREATE OR REPLACE TEMPORARY TABLE sandbox.DrugUpviotTemp AS
+
+SELECT Enrolid
+		,mdate
+		,edate
+		,drugcombo
+		,drugnumber
+		,drug
+		,Line
+        from
+(
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(CLOBAZAM as varchar(255)) as drug
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE CLOBAZAM IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(CARBAMAZEPINE as varchar(255)) CARBAMAZEPINE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE CARBAMAZEPINE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(CARBAMAZEPINE_XR as varchar(255)) CARBAMAZEPINE_XR
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE CARBAMAZEPINE_XR IS NOT Null
+
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(VALPROIC_ACID as varchar(255)) VALPROIC_ACID
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE VALPROIC_ACID IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(PHENYTOIN as varchar(255)) PHENYTOIN
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE PHENYTOIN IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(PHENOBARBITAL as varchar(255)) PHENOBARBITAL
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE PHENOBARBITAL IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(OTHER_FIRST_GENERATION_AEDS as varchar(255)) OTHER_FIRST_GENERATION_AEDS 
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE OTHER_FIRST_GENERATION_AEDS IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(RECTAL_DIAZEPAM as varchar(255)) RECTAL_DIAZEPAM
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE RECTAL_DIAZEPAM IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(LEVETIRACETAM as varchar(255)) LEVETIRACETAM
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE LEVETIRACETAM IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(LEVETIRACETAM_XR as varchar(255)) LEVETIRACETAM_XR
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE LEVETIRACETAM_XR IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(LAMOTRIGINE as varchar(255)) LAMOTRIGINE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE LAMOTRIGINE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(LAMOTRIGINE_XR as varchar(255)) LAMOTRIGINE_XR
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE LAMOTRIGINE_XR IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(TOPIRAMATE as varchar(255)) TOPIRAMATE 
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE TOPIRAMATE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(TROKENDI_XR as varchar(255)) TROKENDI_XR
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE TROKENDI_XR IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(QUDEXY_XR as varchar(255)) QUDEXY_XR
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE QUDEXY_XR IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(OXCARBAZEPINE as varchar(255)) OXCARBAZEPINE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE OXCARBAZEPINE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(OXCARBAZEPINE_XR as varchar(255)) OXCARBAZEPINE_XR
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE OXCARBAZEPINE_XR IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(ZONISAMIDE as varchar(255)) ZONISAMIDE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE ZONISAMIDE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(GABAPENTIN as varchar(255)) GABAPENTIN
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE GABAPENTIN IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(DIVALPROEX_SODIUM as varchar(255)) DIVALPROEX_SODIUM
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE DIVALPROEX_SODIUM IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(DIVALPROEX_SODIUM_ER as varchar(255)) DIVALPROEX_SODIUM_ER
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE DIVALPROEX_SODIUM_ER IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(VIGABATRIN as varchar(255)) VIGABATRIN
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE VIGABATRIN IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(TIAGABINE as varchar(255)) TIAGABINE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE TIAGABINE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(FELBAMATE as varchar(255)) FELBAMATE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE FELBAMATE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(LACOSAMIDE as varchar(255)) LACOSAMIDE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE LACOSAMIDE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(EZOGABINE as varchar(255)) EZOGABINE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE EZOGABINE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(PREGABALIN  as varchar(255)) PREGABALIN 
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE PREGABALIN  IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(RUFINAMIDE as varchar(255)) RUFINAMIDE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE RUFINAMIDE IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(PERAMPANEL as varchar(255)) PERAMPANEL
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE PERAMPANEL IS NOT Null
+
+UNION ALL
+SELECT enrolid
+      ,mdate
+      ,edate
+      ,drugcombo
+      ,drugnumber
+      ,cast(ESLICARBAZEPINE_ACETATE as varchar(255)) ESLICARBAZEPINE_ACETATE
+      ,Line
+FROM sandbox.QUERY_Drug_COMBO
+WHERE ESLICARBAZEPINE_ACETATE IS NOT Null
+
+) a ;
+
+--------------------------------------------------------------------
+
+CREATE OR REPLACE TEMPORARY TABLE sandbox.QUERY_Drug_Line_of_Therapy AS
+
+Select Enrolid
+,drug
+,max(map1) map1
+,max(map2) map2
+,max(map3) map3
+,max(map4) map4
+,max(map5) map5
+,max(map6) map6
+,max(map7) map7
+,max(map8) map8
+,max(map9) map9
+,max(map10) map10
+, max(case when map1  is not null then mdate end) as d1
+, max(case when map2  is not null then mdate end) as d2
+, max(case when map3  is not null then mdate end) as d3
+, max(case when map4  is not null then mdate end) as d4
+, max(case when map5  is not null then mdate end) as d5
+, max(case when map6  is not null then mdate end) as d6
+, max(case when map7  is not null then mdate end) as d7
+, max(case when map8  is not null then mdate end) as d8
+, max(case when map9  is not null then mdate end) as d9
+, max(case when map10 is not null then mdate end) as d10
+, max(case when map1  is not null then edate end) as e1
+, max(case when map2  is not null then edate end) as e2
+, max(case when map3  is not null then edate end) as e3
+, max(case when map4  is not null then edate end) as e4
+, max(case when map5  is not null then edate end) as e5
+, max(case when map6  is not null then edate end) as e6
+, max(case when map7  is not null then edate end) as e7
+, max(case when map8  is not null then edate end) as e8
+, max(case when map9  is not null then edate end) as e9
+, max(case when map10 is not null then edate end) as e10
+FROM(
+Select a.Enrolid, a.mdate, a.edate, a.drug, a.drugcombo, a.drugnumber, a.line, 
+	case when a.line = k.line then 1 else NULL end as map1, 
+	case when a.line = b.line then 2 else NULL end as map2, case when a.line = c.line then  3  else NULL end as map3,
+	case when a.line = d.line then 4 else NULL end as map4, case when a.line = e.line then  5  else NULL end as map5,
+	case when a.line = f.line then 6 else NULL end as map6, case when a.line = g.line then  7  else NULL end as map7,
+	case when a.line = h.line then 8 else NULL end as map8, case when a.line = i.line then  9  else NULL end as map9,
+	case when a.line = j.line then 10 else NULL end as map10
+FROM
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp) a
+
+left join 
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug1
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		  where line = 1
+		) k	  on a.Enrolid = k.enrolid and a.drug = k.drug
+
+left join
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug2
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		  where line = 2
+		) b	  on a.Enrolid = b.enrolid and a.drug = b.drug
+
+left join
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug3
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		  where line = 3
+		) c on a.Enrolid = c.enrolid and a.drug = c.drug
+
+left join
+-- line 4
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug4
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		  where line = 4
+		)d on a.Enrolid = d.enrolid and a.drug = d.drug
+
+left join
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug5
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		  where line = 5
+		)e  on a.Enrolid = e.enrolid and a.drug = e.drug
+
+left join
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug6
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		  where line = 6
+		)f on a.Enrolid = f.enrolid and a.drug = f.drug
+
+left join
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug7
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		  where line = 7
+		) g on a.Enrolid = g.enrolid and a.drug = g.drug
+
+left join
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug8
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		  where line = 8
+		) h	  on a.Enrolid = h.enrolid and a.drug = h.drug
+
+left join
+		(Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug9
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		  where line = 9
+		) i on a.Enrolid = i.enrolid and a.drug = i.drug
+
+left join
+		(
+		Select Enrolid
+		  ,mdate
+		  ,edate
+		  ,drugcombo
+		  ,drugnumber
+		  ,drug as Drug10
+		  ,drug
+		  ,Line
+		  FROM sandbox.DrugUpviotTemp
+		where line = 10
+		)j on a.Enrolid = j.enrolid and a.drug = j.drug
+	) a
+
+group by Enrolid, drug
+order by enrolid, drug
+
+
+-- SELECT COUNT(*) FROM SANDBOX.QUERY_DRUG_LINE_OF_THERAPY 
+
+
+
+
